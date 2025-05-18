@@ -11,7 +11,7 @@ class EventHandler(FileSystemEventHandler):
     def on_any_event(self, event: FileSystemEvent):
         if (event.event_type == 'modified' or event.event_type == 'created') and (event.src_path.endswith('.py') or event.src_path.endswith('.js')):
             logger("info",f"File detected: {event.src_path}")
-            main()
+            main(event.src_path)
             
 
 if __name__ == "__main__":
