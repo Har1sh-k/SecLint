@@ -9,7 +9,7 @@ import os
 
 class EventHandler(FileSystemEventHandler):
     def on_any_event(self, event: FileSystemEvent):
-        if (event.event_type == 'modified' or event.event_type == 'created') and (event.src_path.endswith('.py') or event.src_path.endswith('.js')):
+        if (event.event_type == 'modified' or event.event_type == 'created') and (event.src_path.endswith('.py')):
             logger("info",f"File detected: {event.src_path}")
             main(event.src_path)
             
