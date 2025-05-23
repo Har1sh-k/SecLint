@@ -3,6 +3,7 @@ from watchdog.observers import Observer
 from status_logger import logger
 from load_config import config_loader
 from main import main
+import time
 
 from time import sleep
 import os
@@ -11,8 +12,10 @@ class EventHandler(FileSystemEventHandler):
     def on_any_event(self, event: FileSystemEvent):
         if (event.event_type == 'modified' or event.event_type == 'created') and (event.src_path.endswith('.py')):
             logger("info",f"File detected: {event.src_path}")
-            main(event.src_path)
-            
+            sleep(2) # Wait for file to be fully written
+            if os.path.exists(event.src_path):
+                logger("info", f"Processing file: {event.src_path}")
+                main(event.src_path)
 
 if __name__ == "__main__":
     config = config_loader()
