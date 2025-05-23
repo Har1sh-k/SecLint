@@ -10,6 +10,7 @@ def reader(file_path):
             logger("info", f"Chunking code from {file_name}...")
             split_codes = split_code(content, file_name)
             logger("debug", f"Code split into {len(split_codes)} chunks.")
+            return split_codes
             
     except FileNotFoundError:
         logger("error", f"File not found: {file_path}")
