@@ -18,32 +18,22 @@ def split_code(code: str, file_name: str):
     }
     slices = []
     global_vars = ""
-    
+    imports = ""
+
     for node in tree.body:
-        
         chunk = deepcopy(code_chunks)
-        
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             code_chunk = ast.unparse(node)
             clean_code = "\n".join(l for l in code_chunk.splitlines() if l.strip())
             chunk["code"] = clean_code
             chunk["start_line"] = node.lineno
             chunk["end_line"] = node.end_lineno
-            chunk["metadata"] = {
-                "name": node.name,
-                "type": type(node).__name__
-            }
-            
-            
+            chunk["metadata"]["name"] = node.name
+            chunk["metadata"]["type"] = type(node).__name__
+
         elif isinstance(node, ast.Import) or isinstance(node, ast.ImportFrom):
             import_code = ast.get_source_segment(code, node)
-            chunk["code"] = import_code
-            chunk["start_line"] = node.lineno
-            chunk["end_line"] = node.end_lineno
-            chunk["metadata"] = {
-                "name": node.__class__.__name__,
-                "type": type(node).__name__
-            }
+            imports += import_code + "\n"
             
         elif isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign, ast.Global)):
             assign_code = ast.get_source_segment(code, node)
@@ -63,12 +53,9 @@ def split_code(code: str, file_name: str):
             chunk["code"] = clean_code
             chunk["start_line"] = node.lineno
             chunk["end_line"] = node.end_lineno
-            chunk["metadata"] = {
-                "name": node.__class__.__name__,
-                "type": type(node).__name__
-            }   
-        else:
-            print(f"Skipping node of type {type(node).__name__}")
+            chunk["metadata"]["name"] = node.name
+            chunk["metadata"]["type"] = type(node).__name__
+
         if chunk["code"] is not None:
             slices.append(chunk)
             
@@ -76,9 +63,13 @@ def split_code(code: str, file_name: str):
         chunk["code"] = global_vars
         chunk["start_line"] = 0
         chunk["end_line"] = 0
-        chunk["metadata"] = {
-                "name": node.__class__.__name__,
-                "type": "Gloal variable or assignment"
-            }
-    
+        chunk["metadata"]["name"] = "Global variables"
+        chunk["metadata"]["type"] = "Global variable or assignment"
+    if imports:
+        chunk["code"] = imports
+        chunk["start_line"] = 0
+        chunk["end_line"] = 0
+        chunk["metadata"]["name"] = "Imports"
+        chunk["metadata"]["type"] = "Import statement"
+
     return slices
