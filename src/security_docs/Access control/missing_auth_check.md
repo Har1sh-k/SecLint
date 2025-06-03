@@ -1,4 +1,4 @@
-# Missing Authorization hecks
+# Missing Authorization Checks
 
 ## Explanation
 
