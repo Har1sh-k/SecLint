@@ -67,13 +67,15 @@ def split_code(code: str, file_name: str):
         chunk["metadata"]["name"] = "Global variables"
         chunk["metadata"]["type"] = "Global variable or assignment"
         slices.append(chunk)
-    if imports:
-        chunk = deepcopy(code_chunks)
-        chunk["code"] = imports
-        chunk["start_line"] = 0
-        chunk["end_line"] = 0
-        chunk["metadata"]["name"] = "Imports"
-        chunk["metadata"]["type"] = "Import statement"
-        slices.append(chunk)
+
+    ''' not using imports for now'''    
+    #if imports:
+    #    chunk = deepcopy(code_chunks)
+    #    chunk["code"] = imports
+    #    chunk["start_line"] = 0
+    #    chunk["end_line"] = 0
+    #    chunk["metadata"]["name"] = "Imports"
+    #    chunk["metadata"]["type"] = "Import statement"
+    #    slices.append(chunk)
 
     return slices
