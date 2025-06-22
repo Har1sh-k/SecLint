@@ -1,6 +1,6 @@
 # Fail Securely: Access Controls Must Fail Safe (No Silent Failure)
 
-## Description of the Security Concern
+## Explanation
 
 **Access control** mechanisms (authentication, authorization checks, permission validations) should **fail securely**. “Failing securely” means that if something goes wrong – an error, exception, or any unexpected condition – the system should default to a secure state (typically denying access), rather than a less secure state. The opposite is “fail open,” where a failure in security controls inadvertently grants access or privileges. This is dangerous: a simple exception or logic bug can turn into a full security bypass if not handled properly.
 
@@ -12,7 +12,7 @@ To illustrate, consider the following scenario derived from OWASP’s guidance: 
 
 Real-world incidents have occurred due to fail-open behavior. As an example, a CVE entry notes that a certain workflow product had a default configuration that **allowed all API requests without authentication** – essentially an access control that was not properly enforced (CVE-2020-13927). While this might be a configuration oversight, it echoes the principle: a system that doesn’t explicitly deny in the face of missing config or errors can open gaping holes.
 
-## Best Practices to Fail Securely
+## Secure Coding Practices (OWASP)
 
 To ensure access controls (and security mechanisms in general) fail safe, follow these best practices:
 
@@ -32,7 +32,7 @@ To ensure access controls (and security mechanisms in general) fail safe, follow
 
 By adhering to these practices, any failure in the security mechanism will result in **refusal of access or graceful degradation**, rather than a free pass for an attacker. This ensures that unforeseen issues or code bugs do not inadvertently turn off your application’s critical protections.
 
-## Sample Insecure Code (Fail-Open Logic)
+## Insecure Code Example
 
 ```python
 def is_admin_user(user_id):
@@ -61,7 +61,7 @@ In this example, the function `is_admin_user` attempts to determine if a user ha
 
 This is a silent failure leading to a **fail open** condition – the error in the security check resulted in *unearned access*. As OWASP points out, security methods like this should be designed such that any exception results in denial of permission. In our code, the developer likely intended to default to not admin, but by incorrectly initializing to True and not handling exceptions correctly, the logic is reversed. This is obviously a serious flaw.
 
-## Sample Secure Code (Fail-Safe Logic)
+## Secure Code Example
 
 ```python
 def is_admin_user(user_id):

@@ -1,12 +1,11 @@
 # Secret Management: Avoid Hardcoded Secrets in Code
 
-## Description of the Security Concern
-
+## Explanation
 Secrets such as passwords, API keys, database connection strings, and cryptographic keys should **never be hardcoded in source code**. Hardcoding secrets (i.e., embedding them in plaintext within code) is a serious security risk. If an attacker gains access to the source code (through insider threats, repository leaks, etc.), any embedded credentials are immediately compromised. OWASP notes that many organizations mistakenly keep secrets in code or config files, which greatly increases the likelihood of leaks. According to MITRE’s CWE-798, *“the product contains hard-coded credentials, such as a password or cryptographic key”*, making unauthorized access almost trivial for attackers. In addition to direct breaches, hardcoded secrets cannot be rotated or managed easily, compounding the risk if they leak.
 
 **Impact:** Hardcoded secrets have led to real vulnerabilities. For example, a Python project **FreeTAKServer** was found to contain a hardcoded Flask secret key, allowing attackers to forge cookies and bypass authentication or escalate privileges. This illustrates how an embedded secret can undermine an entire security control. In general, any hardcoded credential (be it an admin password, encryption key, or API token) could be discovered by attackers (especially if code is public or reverse-engineered), leading to full system compromise.
 
-## Best Practices for Secure Implementation
+## Secure Coding Practices (OWASP)
 
 To manage secrets securely and avoid hardcoding, consider these best practices:
 
@@ -24,7 +23,7 @@ To manage secrets securely and avoid hardcoding, consider these best practices:
 
 By following these practices, secrets are managed centrally and **not embedded in code**, greatly reducing the risk of accidental exposure.
 
-## Sample Insecure Code (Hardcoded Secret)
+## Insecure Code Example
 
 Below is an example of **insecure Python code** where a secret is hardcoded. This code uses a hardcoded API token string to authenticate to an external service:
 
@@ -42,7 +41,7 @@ response = requests.get(
 
 In this example, `API_TOKEN` is a sensitive credential embedded directly in the source. This is dangerous because anyone with access to the code (or the version control history) can see the token. If this code were published publicly or leaked, the secret would be exposed. An attacker could misuse the token to access the external service with potentially full privileges. Moreover, rotating the token would require changing the source code and deploying again, which is error-prone and not scalable.
 
-## Sample Secure Code (Externalized Secret)
+## Secure Code Example
 
 The following Python code demonstrates a **secure approach** using an environment variable to supply the secret at runtime, rather than hardcoding it:
 

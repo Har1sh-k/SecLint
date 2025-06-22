@@ -1,7 +1,7 @@
 
 # Password Hashing: Enforce Secure Hash Functions for Passwords
 
-## Description of the Security Concern
+## Explanation
 
 Storing user passwords safely is critical. One common weakness is using **insecure or insufficient hashing algorithms** for passwords, or not hashing passwords at all. Insecure hashing means using outdated or fast hashes (like MD5 or SHA-1) or hashing without salts/pepper, which makes passwords vulnerable to cracking. According to OWASP guidelines, passwords must be stored using *“cryptographically strong, one-way salted hashes”*. Using a weak hash or no salt significantly reduces the effort needed for attackers to recover the original passwords via brute force or precomputed lookup (e.g., rainbow tables).
 
@@ -11,7 +11,7 @@ Storing user passwords safely is critical. One common weakness is using **insecu
 
 Using **insecure hash functions** or configurations is categorized by CWE-916: *“The product generates a hash for a password, but uses a scheme that does not provide a sufficient level of computational effort to make password cracking infeasible.”*. In practice, this means if your code is using a single round of a fast hash (like a single MD5, SHA-1, or even a single SHA-256) for storing passwords, it is not providing adequate security.
 
-## Best Practices for Secure Implementation
+## Secure Coding Practices (OWASP)
 
 To securely handle password hashing, developers should follow these best practices:
 
@@ -29,7 +29,7 @@ To securely handle password hashing, developers should follow these best practic
 
 By strictly using robust hashing mechanisms, even if an attacker steals the password hash database, cracking the passwords should be computationally infeasible or at least extremely time-consuming. This significantly protects users from password reuse attacks and the organization from breach escalation.
 
-## Sample Insecure Code (Weak Password Hashing)
+## Insecure Code Example
 
 ```python
 import hashlib
@@ -44,7 +44,7 @@ In this example, the `store_password` function takes a plaintext password and ha
 
 Even using a faster modern hash like a single SHA-256 would be problematic here – not just MD5. The core issues are lack of a slow, work-factor based algorithm and missing salt. The result is an **insufficient defense** against offline cracking.
 
-## Sample Secure Code (Strong Password Hashing)
+## Secure Code Example
 
 ```python
 import bcrypt  # uses strong adaptive hashing (bcrypt algorithm)
