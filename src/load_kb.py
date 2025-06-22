@@ -65,14 +65,35 @@ def make_vuln_doc(chunks):
     )
     return doc
 
+def load_kb(docs,persist_dir):
+    embeddings = OpenAIEmbeddings()
+    
+    db = Chroma.from_documents(
+        documents=docs,
+        embedding=embeddings,
+        persist_directory=persist_dir,
+        collection_name="vulns_insecure"
+    )
+    
+    db.persist()
+    
+    print(f"Embedded and persisted {len(docs)} vulnerability documents.")
+    return
+
 
 
 if __name__ == "__main__":
     base_dir = Path(__file__).parent
     docs_dir = base_dir / "security_docs"
+    persist_directory = "./insec_code_kb"
     try:
         doc_data=get_all_files(docs_dir)
         data=split_docs_h2(doc_data)
+        load_kb(data)
+        print("Knowledge base loaded successfully.")
+
+        #test the knowledge base
+
     except FileNotFoundError as e:
         print(f"FileNotFoundError: {e}")
     except PermissionError as e:
