@@ -34,6 +34,7 @@ def split_docs_h2(docs):
     return output
 
 def make_vuln_doc(chunks):
+    vul_name = explanation = secure_practices = secure_code_example = references = insecure_code = ""
     for chunk in chunks:
         section = chunk.metadata.get("section", "").strip()
         text = chunk.page_content.strip()
@@ -81,6 +82,29 @@ def load_kb(docs,persist_dir):
     return
 
 
+def test_retrieval(persist_dir, query, k=2):
+    embeddings = OpenAIEmbeddings()
+    db = Chroma(
+        embedding_function=embeddings,
+        persist_directory=persist_dir,
+        collection_name='vulns_insecure'
+    )
+    retriever = db.as_retriever(search_kwargs={'k': k})
+
+    print("Querying with code snippet:\n", query)
+    docs = retriever.get_relevant_documents(query)
+    if not docs:
+        print("No relevant documents found.")
+        return
+    for i, doc in enumerate(docs, 1):
+        print(f"\n=== Match #{i} ===")
+        print("Vulnerability Name:", doc.metadata["Vulnerability Name"])
+        print("Insecure Example:\n", doc.page_content)
+        print("Secure coding practices:", doc.metadata["Secure Coding Practices"])
+        print("-" * 40)
+
+    return 
+
 
 if __name__ == "__main__":
     base_dir = Path(__file__).parent
@@ -92,7 +116,14 @@ if __name__ == "__main__":
         load_kb(data)
         print("Knowledge base loaded successfully.")
 
-        #test the knowledge base
+        test_query =  """
+                def validate_access():
+                abc="xyz"
+                if abc == "xyz": print("Insecure code example")
+                    return True
+                    """
+        print(f"Running retrieval for query: '{test_query}'\n")
+        test_retrieval(persist_directory, test_query)
 
     except FileNotFoundError as e:
         print(f"FileNotFoundError: {e}")
