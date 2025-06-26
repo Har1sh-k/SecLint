@@ -96,18 +96,22 @@ def test_retrieval(persist_dir, query, k=2):
         persist_directory=persist_dir,
         collection_name='vulns_insecure'
     )
-    retriever = db.as_retriever(search_kwargs={'k': k})
+    retriever = db.as_retriever(search_kwargs={'k': k, 'include_score': True})
 
     print("Querying with code snippet:\n", query)
-    docs = retriever.get_relevant_documents(query)
-    if not docs:
+    docs_and_scores = db.similarity_search_with_score(query, k=k)
+
+    if not docs_and_scores:
         print("No relevant documents found.")
         return
-    for i, doc in enumerate(docs, 1):
-        print(f"\n=== Match #{i} ===")
-        print("Vulnerability Name:", doc.metadata["Vulnerability Name"])
+    
+    for i, (doc, score) in enumerate(docs_and_scores, start=1):
+        print(f"\n=== Match #{i} (score = {score:.4f}) ===")
+        print("Vulnerability Name:       ", doc.metadata.get("Vulnerability Name", "N/A"))
         print("Insecure Example:\n", doc.page_content)
-        print("Secure coding practices:", doc.metadata["Secure Coding Practices"])
+        print("Secure Coding Practices:  ", doc.metadata.get("Secure Coding Practices", "N/A"))
+        print("Explanation:              ", doc.metadata.get("Explanation", "N/A"))
+        print("References:               ", doc.metadata.get("References", "N/A"))
         print("-" * 40)
 
     return 
