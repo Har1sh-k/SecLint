@@ -1,12 +1,15 @@
 from pathlib import Path
 from langchain_community.document_loaders import TextLoader
-from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import DirectoryLoader
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain.docstore.document import Document
 
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 def get_all_files(docs_dir):
     loader = DirectoryLoader(
@@ -30,6 +33,8 @@ def split_docs_h2(docs):
         chunks = splitter.split_text(doc.page_content)
         chunks[0].metadata = {'section':"Vulnerability Name"}
         output.append(make_vuln_doc(chunks))
+
+    print(f"Split {len(docs)} documents into vulnerability documents.")
 
     return output
 
@@ -83,7 +88,9 @@ def load_kb(docs,persist_dir):
 
 
 def test_retrieval(persist_dir, query, k=2):
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(
+        model="text-embedding-3-small" 
+    )
     db = Chroma(
         embedding_function=embeddings,
         persist_directory=persist_dir,
@@ -111,6 +118,7 @@ if __name__ == "__main__":
     docs_dir = base_dir / "security_docs"
     persist_directory = "./insec_code_kb"
     try:
+        print("Loading knowledge base...")
         doc_data=get_all_files(docs_dir)
         data=split_docs_h2(doc_data)
         load_kb(data, persist_directory)
