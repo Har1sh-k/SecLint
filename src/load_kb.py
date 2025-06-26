@@ -96,7 +96,6 @@ def test_retrieval(persist_dir, query, k=2):
         persist_directory=persist_dir,
         collection_name='vulns_insecure'
     )
-    retriever = db.as_retriever(search_kwargs={'k': k, 'include_score': True})
 
     print("Querying with code snippet:\n", query)
     docs_and_scores = db.similarity_search_with_score(query, k=k)
