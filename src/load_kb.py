@@ -113,7 +113,7 @@ if __name__ == "__main__":
     try:
         doc_data=get_all_files(docs_dir)
         data=split_docs_h2(doc_data)
-        load_kb(data)
+        load_kb(data, persist_directory)
         print("Knowledge base loaded successfully.")
 
         test_query =  """
