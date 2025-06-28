@@ -19,18 +19,3 @@ def main(file_path):
         logger("warning", "No code chunks were processed.")
         logger("info", "Exiting the application...")
         return
-
-if __name__ == "__main__":
-    config = config_loader()
-    file_source = "D:\\GIT\\git repos\\test_secLint\\hey.py"
-
-    if not file_source:
-        logger("critical", "File source not specified in the configuration.")
-        raise ValueError("File source not specified in the configuration.")
-
-    file_path = Path(file_source)
-    if not file_path.exists():
-        logger("critical", f"File source path does not exist: {file_path}")
-        raise FileNotFoundError(f"File source path does not exist: {file_path}")
-
-    main(file_path)
