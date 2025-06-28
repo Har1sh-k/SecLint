@@ -36,20 +36,23 @@ def fetch_secure_coding_guidelines(code_snippet: str) -> str:
     return guidelines
 
 @tool
-def generate_recommendations(code_snippet: str, metadata: dict) -> str:
+def generate_recommendations(code_snippet: str, best_practices: str) -> str:
     """
     Produce concrete remediation steps, using stored context + guidelines.
     """
     llm = ChatOpenAI(model="gpt-4o", temperature=0.0)
-    context        = metadata.get("context", "")
-    best_practices = metadata.get("best_practices", "")
     prompt = f"""
 You are a Secure code reviewer. Based on the following:
-- Context: {context}
+- Context: {_memory_store.get(code_snippet, {}).get("context", "No context available")}
 - Best Practices: {best_practices}
 - Code Snippet: {code_snippet}
 
 Provide a numbered list of actionable, prioritized recommendations to remediate any issues.
+ Format your response as a JSON object with these keys:
+- "recommendations": List of remediation steps
+- "best_practices": Summary of relevant secure coding guidelines
+
+Ensure clarity and focus on security improvements.
 """
     msg = HumanMessage(content=prompt)
     return llm([msg]).content.strip()
