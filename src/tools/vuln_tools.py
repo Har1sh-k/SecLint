@@ -9,13 +9,14 @@ from tools.security_kb import get_best_practices
 
 load_dotenv()
 
+_memory_store: Dict[str, Dict[str, str]] = {}
 
 @tool
 def understand_context(code_snippet: str) -> str:
     """
     Analyze and remember the snippet’s purpose/use.
     """
-    llm = ChatOpenAI(model="gpt-4", temperature=0.0)
+    llm = ChatOpenAI(model="gpt-4o", temperature=0.0)
     prompt = f"""
             You are a contextual analyzer. Given this code snippet, provide a concise description of what it does, its intended use, and any relevant environment or dependencies:
 
@@ -23,26 +24,23 @@ def understand_context(code_snippet: str) -> str:
             Focus on clarity and precision, as this will guide future recommendations."""
     msg = HumanMessage(content=prompt)
     summary = llm([msg]).content.strip()
+    _memory_store.setdefault(code_snippet, {})["context"] = summary
     return summary
 
 @tool
 def fetch_secure_coding_guidelines(code_snippet: str) -> str:
-    """    Use the RAG to fetch relevant secure coding guidelines based on the code snippet.
-    Expects metadata to include:
-        - code_snippet (str): The code snippet to analyze.
+    """    RAG lookup for secure-coding guidelines
         """
-    best_practices = get_best_practices(code_snippet)
-    return best_practices
+    guidelines = get_best_practices(code_snippet) or "No best-practices found."
+    _memory_store.setdefault(code_snippet, {})["best_practices"] = guidelines
+    return guidelines
 
 @tool
 def generate_recommendations(code_snippet: str, metadata: dict) -> str:
     """
-    Use the LLM to produce concrete, prioritized remediation steps.
-    Expects metadata to include:
-      - context (from understand_context)
-      - best_practices (from fetch_best_practices)
+    Produce concrete remediation steps, using stored context + guidelines.
     """
-    llm = ChatOpenAI(model="gpt-4", temperature=0.0)
+    llm = ChatOpenAI(model="gpt-4o", temperature=0.0)
     context        = metadata.get("context", "")
     best_practices = metadata.get("best_practices", "")
     prompt = f"""
