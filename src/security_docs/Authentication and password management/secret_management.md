@@ -25,11 +25,7 @@ By following these practices, secrets are managed centrally and **not embedded i
 
 ## Insecure Code Example
 
-Below is an example of **insecure Python code** where a secret is hardcoded. This code uses a hardcoded API token string to authenticate to an external service:
-
 ```python
-import requests
-
 # Insecure: Hardcoded API token (secret) in code
 API_TOKEN = "ABC123SECRET_TOKEN_XYZ"  # hardcoded secret
 

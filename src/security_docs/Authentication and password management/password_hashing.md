@@ -32,8 +32,6 @@ By strictly using robust hashing mechanisms, even if an attacker steals the pass
 ## Insecure Code Example
 
 ```python
-import hashlib
-
 def store_password(username, password):
     # Insecure: using MD5 (fast, broken hash) with no salt for password
     hash_hex = hashlib.md5(password.encode()).hexdigest()  # MD5 is not secure for passwords!
