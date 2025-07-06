@@ -23,6 +23,7 @@ SecLint is an AI-powered code vulnerability analysis tool that:
 * **Generates** contextual remediation recommendations with GPT-4/o4-mini-high.
 
 Unlike traditional static code analyzers, SecLint leverages a contextual LLM-driven RAG pipeline to provide best practices and actionable guidance that are relevant to your use case.
+
 ---
 
 
