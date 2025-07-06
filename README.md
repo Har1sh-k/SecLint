@@ -1,6 +1,6 @@
 # SecLint - Code Vulnerability Analysis Agent
 
-A lightweight, RAG-powered AI agent to identify and explain security vulnerabilities in Python code. Combines simple static checks with retrieval of CWE/OWASP guidance and LLM-driven analysis.
+A Python-based AI agent for detecting insecure code patterns in Markdown knowledge bases and providing remediation suggestions. It leverages a Retrieval-Augmented Generation (RAG) approach with OpenAI embeddings and ChromaDB for vector storage.
 
 
 
