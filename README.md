@@ -1,5 +1,13 @@
-# SecLint - Code Vulnerability Analysis Agent
-*<span style="font-size:1em;">A context-aware vulnerability scanner for Python code</span>*
+<div align="center">
+
+# SecLint  
+### Code Vulnerability Analysis Agent
+
+*<em>A context-aware vulnerability scanner for Python code</em>*  
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://opensource.org/licenses/AGPL-3.0)
+
+</div>
 
 A Python-based AI agent for detecting insecure code patterns in a Python project and providing context-based remediation suggestions. It leverages a Retrieval-Augmented Generation (RAG) approach with OpenAI embeddings and ChromaDB for vector storage.
 
@@ -175,3 +183,9 @@ This will ingest and index your new content into the ChromaDB collection (`vulns
 
 
 **Note:** While SecLint is a powerful assistant, it is not a substitute for thorough security reviews by experts. The LLM’s suggestions are based on patterns and the provided knowledge base; complex or subtle vulnerabilities might not be fully recognized. However, SecLint excels at providing human-readable insights and justifications, making it a valuable tool for anyone looking to improve the security of their Python code.
+
+<div align="center">
+
+© 2025 [Har1sh-k](https://github.com/Har1sh-k) • 📜 **Licensed under the [AGPLv3](LICENSE)** 📜
+
+</div>
