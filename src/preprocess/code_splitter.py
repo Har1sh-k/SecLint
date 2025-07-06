@@ -53,8 +53,8 @@ def split_code(code: str, file_name: str):
             chunk["code"] = clean_code
             chunk["start_line"] = node.lineno
             chunk["end_line"] = node.end_lineno
-            chunk["metadata"]["name"] = node.name
-            chunk["metadata"]["type"] = type(node).__name__
+            chunk["metadata"]["name"] = "__main__ guard"
+            chunk["metadata"]["type"] = "If"
 
         if chunk["code"] is not None:
             slices.append(chunk)
