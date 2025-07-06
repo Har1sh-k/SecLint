@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import SystemMessage,HumanMessage
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_core.tools import tool
@@ -17,13 +17,15 @@ def understand_context(code_snippet: str) -> str:
     Analyze and remember the snippet’s purpose/use.
     """
     llm = ChatOpenAI(model="gpt-4o", temperature=0.0)
-    prompt = f"""
-            You are a contextual analyzer. Given this code snippet, provide a concise description of what it does, its intended use, and any relevant environment or dependencies:
-
-            {code_snippet}
-            Focus on clarity and precision, as this will guide future recommendations."""
-    msg = HumanMessage(content=prompt)
-    summary = llm([msg]).content.strip()
+    system_prompt = (
+        """You are a code context analyzer. Given a code snippet, you provide a concise, 
+        precise summary of its functionality, intended use, and any necessary environment or dependencies."""
+    )
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=code_snippet),
+    ]
+    summary = llm.invoke(messages).content.strip()
     _memory_store.setdefault(code_snippet, {})["context"] = summary
     return summary
 
@@ -41,19 +43,24 @@ def generate_recommendations(code_snippet: str, best_practices: str) -> str:
     Produce concrete remediation steps, using stored context + guidelines.
     """
     llm = ChatOpenAI(model="gpt-4o", temperature=0.0)
-    prompt = f"""
-You are a Secure code reviewer. Based on the following:
-- Context: {_memory_store.get(code_snippet, {}).get("context", "No context available")}
-- Best Practices: {best_practices}
-- Code Snippet: {code_snippet}
-
-Provide a numbered list of actionable, prioritized recommendations to remediate any issues.
- Format your response as a JSON object with these keys:
-- "recommendations": List of remediation steps
-- "best_practices": Summary of relevant secure coding guidelines
-
-Ensure clarity and focus on security improvements.
-"""
-    msg = HumanMessage(content=prompt)
-    return llm([msg]).content.strip()
+    system_prompt = (
+        "You are a secure code reviewer. Given the snippet context, secure coding guidelines, and the snippet itself, "
+        "generate a JSON object with these keys:\n"
+        "  - severity: one of Critical, High, Medium, Low, or None if no vulnerabilities.\n"
+        "  - best_practices: a list of relevant secure coding principles.\n"
+        "Remember: Do not include the practice 'Conduct Thorough Code Reviews and Testing'.\n"
+        "Ensure the output is valid JSON."
+    )
+    context = _memory_store.get(code_snippet, {}).get("context", "No context available.")
+    user_content = (
+        f"Context:\n{context}\n\n"
+        f"Secure Coding Guidelines:\n{best_practices}\n\n"
+        f"Code Snippet:\n{code_snippet}"
+    )
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=user_content),
+    ]
+    response = llm.invoke(messages).content.strip()
+    return response
 
